@@ -7,7 +7,7 @@ const App = () => {
     <>
       <GlobalStyles />
 
-      <h2>MemeMaker</h2>
+      <h1>MemeMaker</h1>
     </>
   );
 };
