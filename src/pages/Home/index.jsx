@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import qs from "qs";
+
 import { Wrapper, Card, Templates, Form, Button } from "./styles";
 import logo from "../../images/logo.svg";
 
@@ -7,6 +9,7 @@ const Home = () => {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [boxes, setBoxes] = useState([]);
+  const [generatedMeme, setGeneratedMeme] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -29,15 +32,27 @@ const Home = () => {
     setBoxes([]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const params = {
+    const params = qs.stringify({
       template_id: selectedTemplate.id,
       username: "marcosdev.me",
-      passoword: "Designer688fc",
+      password: "Designer688fc",
       boxes: boxes.map((text) => ({ text })),
-    };
+    });
+
+    const res = await fetch(`https://api.imgflip.com/caption_image?${params}`);
+    const json = await res.json();
+
+    console.log(json);
+    setGeneratedMeme(json.data.url);
+  };
+
+  const handleReset = () => {
+    setSelectedTemplate(null);
+    setBoxes([]);
+    setGeneratedMeme(null);
   };
 
   return (
@@ -45,37 +60,50 @@ const Home = () => {
       <img src={logo} alt="MemeMaker" />
 
       <Card>
-        <h2>Selecione um template</h2>
-        <Templates>
-          {templates.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => handleSelectedTemplate(item)}
-              className={item.id === selectedTemplate?.id ? "selected" : ""}
-            >
-              <img src={item.url} alt={item.name} />
-            </button>
-          ))}
-        </Templates>
-
-        {selectedTemplate && (
+        {generatedMeme && (
           <>
-            <h2>Textos</h2>
-            <Form onSubmit={handleSubmit}>
-              {new Array(selectedTemplate.box_count)
-                .fill("")
-                .map((_, index) => (
-                  <input
-                    key={String(Math.random())}
-                    type="text"
-                    placeholder={`Texto #${index + 1}`}
-                    onChange={handleInputChange(index)}
-                  />
-                ))}
+            <img src={generatedMeme} alt="Generated Meme" />
 
-              <Button type="submit">MakeMyMeme</Button>
-            </Form>
+            <Button type="button" onClick={handleReset}>
+              Criar outra meme
+            </Button>
+          </>
+        )}
+        {!generatedMeme && (
+          <>
+            <h2>Selecione um template</h2>
+            <Templates>
+              {templates.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => handleSelectedTemplate(item)}
+                  className={item.id === selectedTemplate?.id ? "selected" : ""}
+                >
+                  <img src={item.url} alt={item.name} />
+                </button>
+              ))}
+            </Templates>
+
+            {selectedTemplate && (
+              <>
+                <h2>Textos</h2>
+                <Form onSubmit={handleSubmit}>
+                  {new Array(selectedTemplate.box_count)
+                    .fill("")
+                    .map((_, index) => (
+                      <input
+                        key={String(Math.random())}
+                        type="text"
+                        placeholder={`Texto #${index + 1}`}
+                        onChange={handleInputChange(index)}
+                      />
+                    ))}
+
+                  <Button type="submit">MakeMyMeme</Button>
+                </Form>
+              </>
+            )}
           </>
         )}
       </Card>
