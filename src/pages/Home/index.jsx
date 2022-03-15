@@ -31,6 +31,13 @@ const Home = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const params = {
+      template_id: selectedTemplate.id,
+      username: "marcosdev.me",
+      passoword: "Designer688fc",
+      boxes: boxes.map((text) => ({ text })),
+    };
   };
 
   return (
