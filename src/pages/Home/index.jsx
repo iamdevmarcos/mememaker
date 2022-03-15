@@ -5,6 +5,7 @@ import logo from "../../images/logo.svg";
 
 const Home = () => {
   const [templates, setTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -24,20 +25,29 @@ const Home = () => {
         <h2>Selecione um template</h2>
         <Templates>
           {templates.map((item) => (
-            <button key={item.id} type="button">
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setSelectedTemplate(item)}
+              className={item.id === selectedTemplate?.id ? "selected" : ""}
+            >
               <img src={item.url} alt={item.name} />
             </button>
           ))}
         </Templates>
 
-        <h2>Textos</h2>
-        <Form>
-          <input type="text" placeholder="Texto #1" />
-          <input type="text" placeholder="Texto #1" />
-          <input type="text" placeholder="Texto #1" />
+        {selectedTemplate && (
+          <>
+            <h2>Textos</h2>
+            <Form>
+              <input type="text" placeholder="Texto #1" />
+              <input type="text" placeholder="Texto #1" />
+              <input type="text" placeholder="Texto #1" />
 
-          <Button type="submit">MakeMyMeme</Button>
-        </Form>
+              <Button type="submit">MakeMyMeme</Button>
+            </Form>
+          </>
+        )}
       </Card>
     </Wrapper>
   );

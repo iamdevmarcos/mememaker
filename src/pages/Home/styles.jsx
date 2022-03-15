@@ -39,6 +39,11 @@ export const Templates = styled.div`
     border: 0;
     background: transparent;
     margin-right: 10px;
+    border: 2px solid transparent;
+
+    &.selected {
+      border-color: #4395d8;
+    }
 
     img {
       width: 53px;
